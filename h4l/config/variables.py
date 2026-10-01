@@ -93,7 +93,7 @@ def add_variables(config: od.Config) -> None:
     config.add_variable(
         name="m4l",
         null_value=EMPTY_FLOAT,
-        binning=(100, 0, 200.0),
+        binning=(100, 0, 350.0),
         unit="GeV",
         x_title=r"$m_{4l}$",
     )
