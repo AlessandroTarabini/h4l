@@ -370,11 +370,9 @@ def add_das_config(
     cfg.add_shift(name="mu_up", id=10, type="shape")
     cfg.add_shift(name="mu_down", id=11, type="shape")
     add_shift_aliases(cfg, "mu", {"muon_weight": "muon_weight_{direction}"})
-    # TODO #
-    # Task 1.1
-    # Add Electron SFs
-    # Hint: modify event_weights below
-    # Hint: modify production/default.py
+    cfg.add_shift(name="ele_up", id=101, type="shape")
+    cfg.add_shift(name="ele_down", id=111, type="shape")
+    add_shift_aliases(cfg, "ele", {"electron_weight": "electron_weight_{direction}"})
 
 
     cfg.add_shift(name="murmuf_up", id=140, type="shape")
@@ -525,6 +523,7 @@ def add_das_config(
     cfg.x.event_weights = DotDict({
         "normalization_weight": [],
         "muon_weight": get_shifts("mu"),
+        "electron_weight": get_shifts("ele"),
     })
 
     # versions per task family, either referring to strings or to callables receving the invoking
