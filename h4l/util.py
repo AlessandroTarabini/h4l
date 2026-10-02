@@ -58,7 +58,48 @@ def build_2e2mu(muons_plus, muons_minus, electrons_plus, electrons_minus):
 #    ... DON'T FORGET TO LOOK AT ALL POSSIBILITIES ...
 #    ...
 #    return ak.zip({"z1": z1, "z2": z2, "zz": zz}, depth_limit=1)
+def build_4sf(leptons_plus, leptons_minus):
+    lepplus1, lepplus2 = ak.unzip(ak.combinations(leptons_plus, 2))
+    lepminus1, lepminus2 = ak.unzip(ak.combinations(leptons_minus, 2))
+    lepplus11, lepminus11 = ak.unzip(ak.cartesian((lepplus1, lepminus1)))
+    lepplus12, lepminus12 = ak.unzip(ak.cartesian((lepplus1, lepminus2)))
+    lepplus21, lepminus21 = ak.unzip(ak.cartesian((lepplus2, lepminus1)))
+    lepplus22, lepminus22 = ak.unzip(ak.cartesian((lepplus2, lepminus2)))
 
+    z11 = lepplus11 + lepminus11
+    z12 = lepplus12 + lepminus12
+    z21 = lepplus21 + lepminus21
+    z22 = lepplus22 + lepminus22
+
+    mZ=91.2
+
+    d11 = abs(z11.mass - mZ)
+    d12 = abs(z12.mass - mZ)
+    d21 = abs(z21.mass - mZ)
+    d22 = abs(z22.mass - mZ)
+
+    bestA = ak.where(d11 < d22, d11, d22)
+
+    bestB = ak.where(d12 < d21, d12, d21)
+
+    chooseA = bestA < bestB 
+
+    # For partition A:
+    z1_A = ak.where(d11 < d22, z11, z22)
+    z2_A = ak.where(d11 < d22, z22, z11)
+
+    # For partition B:
+    z1_B = ak.where(d12 < d21, z12, z21)
+    z2_B = ak.where(d12 < d21, z21, z12)
+
+    # Final Z1/Z2 chosen per event
+    z1 = ak.where(chooseA, z1_A, z1_B)
+    z2 = ak.where(chooseA, z2_A, z2_B)
+
+    # Combined ZZ (H candidate)
+    zz = z1 + z2
+
+    return ak.zip({"z1": z1, "z2": z2, "zz": zz}, depth_limit=1)
 
 def masked_sorted_indices(mask: ak.Array, sort_var: ak.Array, ascending: bool = False) -> ak.Array:
   """

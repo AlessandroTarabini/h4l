@@ -27,7 +27,7 @@ from h4l.selection.trigger import trigger_selection
 # Bonus: Leading lepton must have pT > 20 GeV, subleading pT > 10 GeV
 # Hint: import the following
 # First you need to define build_4sf in util.py
-# from h4l.util import build_2e2mu, build_4sf
+from h4l.util import build_2e2mu, build_4sf
 
 np = maybe_import("numpy")
 ak = maybe_import("awkward")
@@ -102,12 +102,26 @@ def default(
     # select events with at least four selected leptons
     results.steps["four_leptons"] = (n_ele + n_muon) >= 4
 
-    # Task 2.
-    # Implement official HZZ Selection
-    # All Z candidates must have 12 < mll < 120 GeV
-    # The Z1 candidate must have mZ1 > 40 GeV
-    # The ZZ candidate must have mZZ > 70 GeV
-    # Bonus: Leading lepton must have pT > 20 GeV, subleading pT > 10 GeV
+    electrons = events.Electron[ele_idx]
+    muons = events.Muon[muon_idx]
+
+    muons_plus = muons[muons.charge > 0]
+    muons_minus = muons[muons.charge < 0]
+    electrons_plus = electrons[electrons.charge > 0]
+    electrons_minus = electrons[electrons.charge < 0]
+
+    zz_2e2mu = build_2e2mu(muons_plus, muons_minus, electrons_plus, electrons_minus)
+    zz_4e    = build_4sf(electrons_plus, electrons_minus)
+    zz_4mu   = build_4sf(muons_plus, muons_minus)
+    zz_inclusive = ak.concatenate([zz_2e2mu, zz_4e, zz_4mu], axis=1)
+
+    step_has_valid_z = ((zz_inclusive.z1.mass > 12) & (zz_inclusive.z1.mass < 120)) & ((zz_inclusive.z2.mass > 12) & (zz_inclusive.z2.mass<120))
+    step_has_valid_z1 = (zz_inclusive.z1.mass > 40)
+    step_has_valid_zz = (zz_inclusive.zz.mass > 70)
+    # results.steps["four_leptons"] = ak.num(zz_inclusive.zz.mass, axis=1) == 1
+    results.steps["has_valid_z"] = ak.any(step_has_valid_z, axis=1)
+    results.steps["best_z_mass"] = ak.any(step_has_valid_z1, axis=1)
+    results.steps["zzcands"] = ak.any(step_has_valid_zz, axis=1)
 
     # post selection build process IDs
     events = self[process_ids](events, **kwargs)

@@ -252,7 +252,7 @@ def add_das_config(
     # Expand selection to use HZZ4L official one
     # Hint: Add here additional selector_steps
     # Hint: Modify selection/default.py
-    cfg.x.default_selector_steps = ("trigger", "four_leptons")
+    cfg.x.default_selector_steps = ("four_leptons", "has_valid_z", "best_z_mass", "zzcands")
     cfg.x.default_producer = "default"
     cfg.x.default_hist_producer = "cf_default"
     cfg.x.default_ml_model = None
