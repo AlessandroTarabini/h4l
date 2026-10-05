@@ -122,6 +122,9 @@ def default(
     results.steps["has_valid_z"] = ak.any(step_has_valid_z, axis=1)
     results.steps["best_z_mass"] = ak.any(step_has_valid_z1, axis=1)
     results.steps["zzcands"] = ak.any(step_has_valid_zz, axis=1)
+    # [AT] To cut on m4l for plotting
+    m4l = ak.fill_none(ak.firsts(zz_inclusive.zz.mass), -1) # We need to be safe against events w/o ZZ candidates, that is why the "fill_none"
+    results.steps["m4l_window"] = (m4l >= 118) & (m4l <= 130)
 
     # post selection build process IDs
     events = self[process_ids](events, **kwargs)

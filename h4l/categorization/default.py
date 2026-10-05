@@ -36,3 +36,8 @@ def catid_4mu(self: Categorizer, events: ak.Array, **kwargs) -> tuple[ak.Array, 
 def catid_2e2mu(self: Categorizer, events: ak.Array, **kwargs) -> tuple[ak.Array, ak.Array]:
       mask = (ak.num(events.Electron, axis=-1) == 2) & (ak.num(events.Muon, axis=-1) == 2)
       return events, mask
+      
+@categorizer(uses={"m4l"})
+def catid_m4l_window(self: Categorizer, events: ak.Array, **kwargs) -> tuple[ak.Array, ak.Array]:
+    mask = (events.m4l >= 118) & (events.m4l <= 130)
+    return events, mask

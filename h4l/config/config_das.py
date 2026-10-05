@@ -252,7 +252,8 @@ def add_das_config(
     # Expand selection to use HZZ4L official one
     # Hint: Add here additional selector_steps
     # Hint: Modify selection/default.py
-    cfg.x.default_selector_steps = ("four_leptons", "has_valid_z", "best_z_mass", "zzcands")
+    # cfg.x.default_selector_steps = ("four_leptons", "has_valid_z", "best_z_mass", "zzcands") # [AT] Uncomment this for no cut on m4l
+    cfg.x.default_selector_steps = ("four_leptons", "has_valid_z", "best_z_mass", "zzcands", "m4l_window") # [AT] Uncomment this for cut on m4l
     cfg.x.default_producer = "default"
     cfg.x.default_hist_producer = "cf_default"
     cfg.x.default_ml_model = None

@@ -110,6 +110,23 @@ def add_variables(config: od.Config) -> None:
         binning=(40, 0.0, 1.0),
         x_title=r"Electron ID BDT",
     )
+    config.add_variable(
+        name="mz1",
+        expression="mz1",
+        null_value=EMPTY_FLOAT,
+        binning=(60, 75, 115.0),
+        unit="GeV",
+        x_title=r"$m_{z1}$",
+    )
+    config.add_variable(
+        name="mz2",
+        expression="mz2",
+        null_value=EMPTY_FLOAT,
+        binning=(100, 0, 150.0),
+        unit="GeV",
+        x_title=r"$m_{z2}$",
+        y_log=False,
+    )
 
     # TODO #
     # Task 3.
